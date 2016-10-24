@@ -64,7 +64,7 @@ module Net; module SSH; module Transport
 
       debug { "establishing connection to #{@host}:#{@port}" }
       factory = options[:proxy] || TCPSocket
-      @socket = timeout(options[:timeout] || 0) { @bind_address.nil? || options[:proxy] ? factory.open(@host, @port) : factory.open(@host,@port,@bind_address) }
+      @socket = Timeout.timeout(options[:timeout] || 0) { @bind_address.nil? || options[:proxy] ? factory.open(@host, @port) : factory.open(@host,@port,@bind_address) }
       @socket.extend(PacketStream)
       @socket.logger = @logger
 
@@ -75,7 +75,7 @@ module Net; module SSH; module Transport
       @host_key_verifier = select_host_key_verifier(options[:paranoid])
 
 
-      @server_version = timeout(options[:timeout] || 0) { ServerVersion.new(socket, logger) }
+      @server_version = Timeout.timeout(options[:timeout] || 0) { ServerVersion.new(socket, logger) }
 
       @algorithms = Algorithms.new(self, options)
       wait { algorithms.initialized? }
