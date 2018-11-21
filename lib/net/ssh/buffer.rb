@@ -252,8 +252,9 @@ module Net; module SSH
 
         when "ssh-rsa"
           key = OpenSSL::PKey::RSA.new
-          key.e = read_bignum
-          key.n = read_bignum
+          e = read_bignum
+          n = read_bignum
+          key.set_key(n, e, nil)
 
         when /^ecdsa\-sha2\-(\w*)$/
           unless defined?(OpenSSL::PKey::EC)

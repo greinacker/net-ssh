@@ -115,8 +115,9 @@ module Net; module SSH; module Transport; module Kex
       def generate_key #:nodoc:
         dh = OpenSSL::PKey::DH.new
 
-        dh.p, dh.g = get_parameters
-        dh.priv_key = OpenSSL::BN.rand(data[:need_bytes] * 8)
+        p, g = get_parameters
+        dh.set_pqg(p, nil, g)
+        dh.set_key(nil, OpenSSL::BN.rand(data[:need_bytes] * 8))
 
         dh.generate_key! until dh.valid?
 
