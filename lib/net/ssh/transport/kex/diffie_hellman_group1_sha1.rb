@@ -117,9 +117,13 @@ module Net; module SSH; module Transport; module Kex
 
         p, g = get_parameters
         dh.set_pqg(p, nil, g)
-        dh.set_key(nil, OpenSSL::BN.rand(data[:need_bytes] * 8))
 
-        dh.generate_key! until dh.valid?
+        # dh.generate_key! until dh.valid?
+        dh.generate_key!
+        until dh.valid? && dh.priv_key.num_bytes == data[:need_bytes]
+          dh.set_key(nil, OpenSSL::BN.rand(data[:need_bytes] * 8))
+          dh.generate_key!
+        end
 
         dh
       end
